@@ -1,0 +1,1 @@
+for connection, color in connection_colors.items():
