@@ -31,7 +31,7 @@ counter = 0
 temp_state = []
 a=0
 bad_counter = []
-
+state= None
 # Counter logic function
 # logic:
 # *shoulder logic:
@@ -99,25 +99,26 @@ def counter_logic(
     return hand_state, counter, shoulder_state, temp_state,a 
 
 
-def check(temp_state, counter, a,bad_counter):
+def check(temp_state, counter, a,bad_counter,state):
     
     if counter != 0 and a==1:
         if "up" in temp_state:
-            print("dung")
+            state = "dung"
             
             
 
         else:
+            state = "sai"
             if counter not in bad_counter:
                 bad_counter.append(counter)
                 print("sai")
             if counter in bad_counter:
                 pass
-            
+
             
     if a==3 and counter != 0:
         temp_state.clear()
-    return bad_counter
+    return bad_counter, state
 
 
 vid_path = "test.mp4"
@@ -247,14 +248,36 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             temp_state,
             a
         )
-        badct = check(temp_state, counter, a,bad_counter)
+        badct, st = check(temp_state, counter, a,bad_counter, state)
         # print(temp_state)
         print(badct)
         print(counter)
         # Render curl counter
         # Setup status box
         cv2.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
+        
+        cv2.rectangle(image, (640, 0), (500, 73), (245, 117, 16), -1)
 
+        cv2.putText(
+            image,
+            "REP STATUS",
+            (520, 12),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (0, 0, 0),
+            1,
+            cv2.LINE_AA,
+        )
+        cv2.putText(
+            image,
+            str(st),
+            (520, 60),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.5,
+            (255, 255, 0),
+            2,
+            cv2.LINE_AA,
+        )
         # Rep data
         cv2.putText(
             image,
@@ -281,7 +304,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
         cv2.putText(
             image,
             "STAGE",
-            (65, 12),
+            (70, 12),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.5,
             (0, 0, 0),
